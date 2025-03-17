@@ -1,13 +1,14 @@
 <?php
-
 namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -17,14 +18,17 @@ class User
     #[ORM\Column(length: 50)]
     private ?string $pseudo = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $creationDate = null;
+    #[ORM\Column(type: 'json')]
+    private array $roles = [];
+
+    #[ORM\Column(type: "datetime")]
+    private ?\DateTimeInterface $creationDate = null;
 
     #[ORM\Column]
     private ?bool $isBlocked = null;
@@ -35,13 +39,6 @@ class User
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function setId(int $id): static
-    {
-        $this->id = $id;
-
-        return $this;
     }
 
     public function getPseudo(): ?string
@@ -80,16 +77,32 @@ class User
         return $this;
     }
 
-    public function getCreationDate(): ?string
+    public function getRoles(): array
     {
-        return $this->creationDate;
+        return $this->roles ?? [];
     }
 
-    public function setCreationDate(string $creationDate): static
+    public function getSalt(): ?string
     {
-        $this->creationDate = $creationDate;
+        return null;
+    }
 
+    public function getUsername(): string
+    {
+        return $this->email;
+    }
+
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
         return $this;
+    }
+
+    public function eraseCredentials(): void { }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->email;
     }
 
     public function isBlocked(): ?bool
@@ -113,6 +126,17 @@ class User
     {
         $this->isAdmin = $isAdmin;
 
+        return $this;
+    }
+
+    public function getCreationDate(): ?\DateTimeInterface
+    {
+        return $this->creationDate;
+    }
+
+    public function setCreationDate(\DateTimeInterface $creationDate): static
+    {
+        $this->creationDate = $creationDate;
         return $this;
     }
 }
