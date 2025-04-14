@@ -3,9 +3,16 @@
 {% block title %}Mon profil{% endblock %}
 
 {% block body %}
-    <h1>Bienvenue {{ user.pseudo }}</h1>
-    <ul>
-        <li>Email : {{ user.email }}</li>
-        <li>Date de création : {{ user.creationDate|date('d/m/Y') }}</li>
-    </ul>
+    <div class="max-w-xl mx-auto px-4 py-10">
+
+        <div class="bg-white shadow-lg rounded-xl p-6">
+            <h1 class="text-3xl font-bold mb-4 text-center">Bienvenue {{ user.pseudo }}</h1>
+
+            <ul class="text-gray-800 space-y-2">
+                <li><span class="font-semibold">Email :</span> {{ user.email }}</li>
+                <li><span class="font-semibold">Date de création :</span> {{ user.creationDate|date('d/m/Y') }}</li>
+            </ul>
+        </div>
+
+    </div>
 {% endblock %}

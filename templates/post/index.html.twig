@@ -3,19 +3,33 @@
 {% block title %}Tous les articles{% endblock %}
 
 {% block body %}
-    <h1>Liste de tous les articles</h1>
+    <div class="max-w-4xl mx-auto px-4 py-10">
 
-    {% for post in posts %}
-        <article style="margin-bottom: 2em;">
-            <h2>
-                <a href="{{ path('app_post_show', { id: post.id }) }}">
-                    {{ post.title }}
-                </a>
-            </h2>
-            <p>{{ post.content|slice(0, 150) ~ '...' }}</p>
-            <p><em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em></p>
-        </article>
-    {% else %}
-        <p>Aucun article pour le moment.</p>
-    {% endfor %}
+        <h1 class="text-3xl font-bold mb-8 text-center">Liste de tous les articles</h1>
+
+        {% for post in posts %}
+            <article class="bg-white shadow-md rounded-xl p-6 mb-6 hover:shadow-lg transition">
+                <h2 class="text-2xl font-semibold text-blue-700 hover:underline mb-2">
+                    <a href="{{ path('app_post_show', { id: post.id }) }}">
+                        {{ post.title }}
+                    </a>
+                </h2>
+                <p class="text-gray-700 mb-3">
+                    {{ post.content|slice(0, 150) ~ '...' }}
+                </p>
+                <p class="text-sm text-gray-500 mb-1">
+                    ✍️ <em>Par {{ post.author }}</em>
+                </p>
+                <p class="text-sm text-gray-500">
+                    📅 <em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em>
+                </p>
+                <p class="text-sm text-gray-600">
+                    ❤️ <strong>{{ post.getLikeCount() }}</strong> like{{ post.getLikeCount() > 1 ? 's' : '' }}
+                </p>
+            </article>
+        {% else %}
+            <p class="text-gray-500 text-center italic">Aucun article pour le moment.</p>
+        {% endfor %}
+
+    </div>
 {% endblock %}
