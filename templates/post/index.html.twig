@@ -5,7 +5,13 @@
 {% block body %}
     <div class="max-w-4xl mx-auto px-4 py-10">
 
-        <h1 class="text-3xl font-bold mb-8 text-center">Liste de tous les articles</h1>
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-center">Liste de tous les articles</h1>
+            <a href="{{ path('app_post_new') }}"
+               class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                ➕ Nouvel article
+            </a>
+        </div>
 
         {% for post in posts %}
             <article class="bg-white shadow-md rounded-xl p-6 mb-6 hover:shadow-lg transition">

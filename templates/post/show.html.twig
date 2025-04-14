@@ -33,9 +33,25 @@
             <h3 class="text-2xl font-semibold mb-4">Commentaires</h3>
 
             {% for comment in post.comments %}
+                {% if app.user and app.user.userIdentifier == comment.author %}
+                    <form method="post" action="{{ path('app_comment_delete', { id: comment.id }) }}"
+                          onsubmit="return confirm('Voulez-vous vraiment supprimer ce commentaire ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete_comment_' ~ comment.id) }}">
+                        <button type="submit"
+                                class="text-sm text-red-600 hover:underline mt-2">
+                            Supprimer
+                        </button>
+                    </form>
+                {% endif %}
                 <div class="bg-white shadow-md rounded-xl p-4 mb-4">
                     <div class="flex justify-between items-center mb-1">
-                        <span class="font-semibold text-gray-900">{{ comment.author }}</span>
+                        <span class="font-semibold text-gray-900">
+                            {% if comment.author %}
+                            {{ comment.author.pseudo }}
+                            {% else %}
+                                (Auteur inconnu)
+                            {% endif %}
+                        </span>
                         <span class="text-xs text-gray-500">{{ comment.createdAt|date('d/m/Y à H:i') }}</span>
                     </div>
                     <p class="text-gray-700 mt-2">{{ comment.content }}</p>

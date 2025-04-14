@@ -139,4 +139,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->creationDate = $creationDate;
         return $this;
     }
+
+    public function __toString(): string
+    {
+        return $this->pseudo;
+    }
+
 }
