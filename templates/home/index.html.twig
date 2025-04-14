@@ -6,12 +6,13 @@
     <h1>Liste des articles</h1>
 
     {% for post in posts %}
-        <div class="post">
-            <h2>{{ post.title }}</h2>
-            <p>{{ post.content|length > 200 ? post.content|slice(0, 200) ~ '...' : post.content }}</p>
-            <a href="{{ path('app_post_show', {'id': post.id}) }}">Lire l'article</a>
-        </div>
+        <article>
+            <h2><a href="{{ path('app_post_show', { id: post.id }) }}">{{ post.title }}</a></h2>
+            <p>{{ post.content|slice(0, 150) ~ '...' }}</p>
+            <p><em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em></p>
+        </article>
     {% else %}
         <p>Aucun article publié pour le moment.</p>
     {% endfor %}
+
 {% endblock %}
