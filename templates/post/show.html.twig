@@ -5,7 +5,6 @@
 {% block body %}
     <h1>{{ post.title }}</h1>
     <p>{{ post.content }}</p>
-    <p><em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em></p>
 
     <hr>
 
@@ -24,6 +23,6 @@
     {{ form_start(commentForm) }}
     {{ form_row(commentForm.author) }}
     {{ form_row(commentForm.content) }}
-    <button type="submit">Envoyer</button>
+    <button type="submit" class="btn btn-primary">Envoyer</button>
     {{ form_end(commentForm) }}
 {% endblock %}

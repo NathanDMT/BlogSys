@@ -67,4 +67,15 @@ final class PostController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    #[Route('/post', name: 'app_post_index')]
+    public function index(PostRepository $postRepository): Response
+    {
+        $posts = $postRepository->findBy([], ['createdAt' => 'DESC']);
+
+        return $this->render('post/index.html.twig', [
+            'posts' => $posts,
+        ]);
+    }
+
 }

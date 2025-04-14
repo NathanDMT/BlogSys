@@ -3,15 +3,6 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-    <h1>Liste des articles</h1>
+    <h1>Bienvenu sur BlogSys!</h1>
 
-    {% for post in posts %}
-        <article style="margin-bottom: 2em;">
-            <h2><a href="{{ path('app_post_show', { id: post.id }) }}">{{ post.title }}</a></h2>
-            <p>{{ post.content|slice(0, 150) ~ '...' }}</p>
-            <p><em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em></p>
-        </article>
-    {% else %}
-        <p>Aucun article publié pour le moment.</p>
-    {% endfor %}
 {% endblock %}

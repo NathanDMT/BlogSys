@@ -13,16 +13,17 @@
     </head>
     <nav style="background-color: #f5f5f5; padding: 10px; margin-bottom: 20px;">
         <a href="{{ path('app_home') }}" style="margin-right: 15px;">Accueil</a>
-        <a href="{{ path('app_post_list') }}" style="margin-right: 15px;">Articles</a>
-        <a href="{{ path('app_profile') }}" style="margin-right: 15px;">Profil</a>
+        <a href="{{ path('app_post_index') }}" style="margin-right: 15px;">Articles</a>
 
         {% if app.user %}
-            <span style="margin-right: 15px;">Connecté en tant que <strong>{{ app.user.pseudo }}</strong></span>
+            <a href="{{ path('app_profile') }}" style="margin-right: 15px;">Profil</a>
             <a href="{{ path('app_logout') }}">Déconnexion</a>
         {% else %}
-            <a href="{{ path('app_login') }}">Connexion</a>
+            <a href="{{ path('app_login') }}" style="margin-right: 15px;">Connexion</a>
+            <a href="{{ path('app_register') }}">Inscription</a>
         {% endif %}
     </nav>
+
 
 
     <body>
