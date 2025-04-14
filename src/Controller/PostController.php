@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Post;
+use App\Form\CommentType;
 use App\Form\PostType;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,17 +15,36 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class PostController extends AbstractController
 {
-    #[Route('/post/{id}', name: 'app_post_show', requirements: ['id' => '\d+'])]
-    public function show(int $id, PostRepository $postRepository): Response
-    {
+    #[Route('/post/{id}', name: 'app_post_show')]
+    public function show(
+        int $id,
+        PostRepository $postRepository,
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
         $post = $postRepository->find($id);
 
         if (!$post) {
-            throw $this->createNotFoundException('Article introuvable.');
+            throw $this->createNotFoundException('Post introuvable.');
+        }
+
+        $comment = new Comment();
+        $comment->setPost($post);
+        $comment->setCreatedAt(new \DateTimeImmutable());
+
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($comment);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
         }
 
         return $this->render('post/show.html.twig', [
             'post' => $post,
+            'commentForm' => $form->createView(),
         ]);
     }
 
