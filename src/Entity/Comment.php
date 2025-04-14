@@ -23,8 +23,9 @@ class Comment
     #[ORM\Column(length: 255)]
     private ?string $author = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $post = null;
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Post $post = null;
 
     public function getId(): ?int
     {
@@ -74,15 +75,14 @@ class Comment
         return $this;
     }
 
-    public function getPost(): ?string
+    public function getPost(): Post
     {
         return $this->post;
     }
 
-    public function setPost(string $post): static
+    public function setPost(Post $post): static
     {
         $this->post = $post;
-
         return $this;
     }
 }

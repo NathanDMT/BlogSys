@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h2 class="text-center">Inscription</h2>
+        <div class="card p-4">
+            <form method="post" action="{{ path('app_register') }}" novalidate data-turbo="false">
+            {{ form_start(form) }}
+            <div class="mb-3">
+                {{ form_label(form.pseudo) }}
+                {{ form_widget(form.pseudo, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.password) }}
+                {{ form_widget(form.password, {'attr': {'class': 'form-control'}}) }}
+            </div>
+            <button type="submit" class="btn btn-primary w-100">S'inscrire</button>
+
+                {{ form_errors(form) }}
+                {{ form_widget(form) }}
+
+            {{ form_end(form, {'render_rest': false}) }}
+        </div>
+    </div>
+{% endblock %}

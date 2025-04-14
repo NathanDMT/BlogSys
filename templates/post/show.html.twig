@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.title }}{% endblock %}
+
+{% block body %}
+    <h1>{{ post.title }}</h1>
+    <p>{{ post.content }}</p>
+    <p><em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em></p>
+
+    <hr>
+
+    <h3>Commentaires</h3>
+    {% for comment in post.comments %}
+        <div style="margin-bottom: 1em; border-bottom: 1px solid #ccc; padding-bottom: .5em;">
+            <strong>{{ comment.author }}</strong><br>
+            <small>{{ comment.createdAt|date('d/m/Y à H:i') }}</small>
+            <p>{{ comment.content }}</p>
+        </div>
+    {% else %}
+        <p>Aucun commentaire pour le moment.</p>
+    {% endfor %}
+
+    <h4>Laisser un commentaire</h4>
+    {{ form_start(commentForm) }}
+    {{ form_row(commentForm.author) }}
+    {{ form_row(commentForm.content) }}
+    <button type="submit">Envoyer</button>
+    {{ form_end(commentForm) }}
+{% endblock %}
