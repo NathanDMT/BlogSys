@@ -121,22 +121,30 @@ final class PostController extends AbstractController
     }
 
     #[Route('/post/{id}/edit', name: 'app_post_edit')]
-    public function edit(Post $post, Request $request, EntityManagerInterface $em): Response
-    {
-        // Vérifie que l'utilisateur courant est bien l'auteur du post
+    public function edit(
+        Post $post,
+        Request $request,
+        EntityManagerInterface $em
+    ): Response {
+        // Vérification que l'utilisateur connecté est l'auteur
         if ($this->getUser() !== $post->getAuthor()) {
             throw $this->createAccessDeniedException('Vous ne pouvez modifier que vos propres articles.');
         }
 
+        // Création du formulaire lié à l'article existant
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
+        // Si le formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) {
+            // Le champ updatedAt se met automatiquement grâce à @PreUpdate
             $em->flush();
 
-            return $this->redirectToRoute('app_home');
+            // Redirection après modification
+            return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
         }
 
+        // Sinon, on affiche le formulaire
         return $this->render('post/edit.html.twig', [
             'form' => $form->createView(),
             'post' => $post,

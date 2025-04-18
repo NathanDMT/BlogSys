@@ -27,9 +27,10 @@
                             {{ post.createdAt|date('d/m/Y H:i') }}
                             {% if post.updatedAt > post.createdAt %}
                                 <br><span class="text-xs text-gray-500 italic">
-
+                                modifié le {{ post.updatedAt|date('d/m/Y H:i') }}
                             </span>
                             {% endif %}
+                        </td>
                         </td>
 
                         <td class="px-6 py-4 space-x-2">
