@@ -5,6 +5,7 @@
 {% block body %}
     <div class="max-w-3xl mx-auto px-4 py-10 space-y-10">
 
+        <!-- Article -->
         <div class="bg-white shadow-lg rounded-xl p-6">
             <h1 class="text-3xl font-bold mb-4">{{ post.title }}</h1>
             <p class="text-gray-800 mb-6 leading-relaxed">{{ post.content }}</p>
@@ -25,5 +26,55 @@
                 </div>
             {% endif %}
         </div>
+
+        <!-- Commentaires -->
+        <div class="bg-white shadow-md rounded-xl p-6 space-y-6">
+            <h2 class="text-2xl font-semibold mb-4">💬 Commentaires</h2>
+
+            {% for comment in post.comments %}
+                <div class="border border-gray-200 p-4 rounded-lg">
+                    <div class="flex justify-between items-center text-sm text-gray-500 mb-1">
+                        <strong>{{ comment.author ? comment.author.pseudo : 'Utilisateur inconnu' }}</strong>
+                        <span>{{ comment.createdAt|date('d/m/Y H:i') }}</span>
+                    </div>
+                    <p class="text-gray-800">{{ comment.content }}</p>
+
+                    {% if app.user and (comment.author == app.user or app.user.isAdmin) %}
+                        <div class="text-right mt-2">
+                            <a href="{{ path('app_comment_delete', { id: comment.id }) }}"
+                               class="text-sm text-red-500 hover:underline">🗑 Supprimer</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 italic">Aucun commentaire pour l’instant.</p>
+            {% endfor %}
+
+        </div>
+
+        <!-- Formulaire de commentaire -->
+        {% if app.user %}
+            <div class="bg-white shadow-md rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Ajouter un commentaire</h2>
+
+                {{ form_start(commentForm) }}
+                <div class="mb-4">
+                    {{ form_row(commentForm.content, {
+                        attr: {
+                            class: 'w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200'
+                        }
+                    }) }}
+                </div>
+
+                <button type="submit"
+                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
+                    Publier
+                </button>
+                {{ form_end(commentForm) }}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-500 italic">Connectez-vous pour laisser un commentaire.</p>
+        {% endif %}
+
     </div>
 {% endblock %}

@@ -3,42 +3,63 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\Post;
+use App\Form\CommentType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-final class CommentController extends AbstractController
+#[Route('/comment')]
+class CommentController extends AbstractController
 {
-    #[Route('/comment', name: 'app_comment')]
-    public function index(): Response
+    #[IsGranted('ROLE_USER')]
+    #[Route('/new/{id}', name: 'app_comment_new', methods: ['POST'])]
+    public function new(Request $request, Post $post, EntityManagerInterface $entityManager): Response
     {
-        return $this->render('comment/index.html.twig', [
-            'controller_name' => 'CommentController',
-        ]);
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Vérifier si l'utilisateur est bien connecté
+            if ($this->getUser()) {
+                $user = $this->getUser();
+                $comment->setCreatedAt(new \DateTimeImmutable());
+                $comment->setAuthor($user);
+                $comment->setPost($post);
+
+                // Enregistrer le commentaire
+                $entityManager->persist($comment);
+                $entityManager->flush();
+
+                $this->addFlash('success', 'Commentaire ajouté avec succès.');
+            } else {
+                return $this->redirectToRoute('app_login');
+            }
+        }
+
+        return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
     }
 
-    // SUPPRIMER SON COMMENTAIRE (OU UN COMMENTAIRE SI ADMIN)
-    #[Route('/comment/{id}/delete', name: 'app_comment_delete', methods: ['POST'])]
-    public function delete(Comment $comment, EntityManagerInterface $em, Request $request): Response
+    #[Route('/delete/{id}', name: 'app_comment_delete', methods: ['GET'])]
+    public function delete(Comment $comment, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
 
-        // Protection : seul l'auteur du commentaire peut supprimer
-        if (!$user || $comment->getAuthor() !== $user->getUserIdentifier()) {
-            throw $this->createAccessDeniedException("Vous ne pouvez pas supprimer ce commentaire.");
+        if (!$user || ($comment->getAuthor() !== $user && !$user->isAdmin())) {
+            throw $this->createAccessDeniedException("Action non autorisée.");
         }
 
-        if ($this->isCsrfTokenValid('delete_comment_' . $comment->getId(), $request->request->get('_token'))) {
-            $em->remove($comment);
-            $em->flush();
+        $postId = $comment->getPost()->getId();
 
-            $this->addFlash('success', 'Commentaire supprimé.');
-        }
+        $entityManager->remove($comment);
+        $entityManager->flush();
 
-        return $this->redirectToRoute('app_post_show', [
-            'id' => $comment->getPost()->getId(),
-        ]);
+        $this->addFlash('success', 'Commentaire supprimé.');
+
+        return $this->redirectToRoute('app_post_show', ['id' => $postId]);
     }
 }

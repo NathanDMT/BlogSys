@@ -20,7 +20,8 @@ class Comment
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
@@ -63,15 +64,14 @@ class Comment
         return $this;
     }
 
-    public function getAuthor(): ?string
+    public function getAuthor(): ?User
     {
         return $this->author;
     }
 
-    public function setAuthor(string $author): static
+    public function setAuthor(User $author): static
     {
         $this->author = $author;
-
         return $this;
     }
 
