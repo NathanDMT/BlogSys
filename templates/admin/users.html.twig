@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des utilisateurs{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Gestion des utilisateurs</h1>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-100 text-gray-700 text-left text-sm uppercase font-semibold">
+                <tr>
+                    <th class="px-6 py-4">ID</th>
+                    <th class="px-6 py-4">Pseudo</th>
+                    <th class="px-6 py-4">Email</th>
+                    <th class="px-6 py-4">Nouveau mot de passe</th>
+                    <th class="px-6 py-4">Bloqué</th>
+                    <th class="px-6 py-4">Admin</th>
+                    <th class="px-6 py-4">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm">
+                {% for user in users %}
+                    <tr class="border-t border-gray-200 hover:bg-gray-50">
+                        <form action="{{ path('admin_user_update', {id: user.id}) }}" method="post">
+                            <input type="hidden" name="_token" value="{{ csrf_token('admin_user_update_' ~ user.id) }}">
+                            <td class="px-6 py-4">{{ user.id }}</td>
+                            <td class="px-6 py-4">
+                                <input type="text" name="pseudo" value="{{ user.pseudo }}"
+                                       class="border rounded px-2 py-1 w-full text-sm">
+                            </td>
+                            <td class="px-6 py-4">
+                                <input type="email" name="email" value="{{ user.email }}"
+                                       class="border rounded px-2 py-1 w-full text-sm">
+                            </td>
+                            <td class="px-6 py-4">
+                                <input type="password" name="password"
+                                       placeholder="Nouveau mot de passe"
+                                       class="border rounded px-2 py-1 w-full text-sm">
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-block px-2 py-1 rounded-full text-xs font-medium {{ user.isBlocked ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' }}">
+                                    {{ user.isBlocked ? 'Oui' : 'Non' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center">
+                                <span class="inline-block px-2 py-1 rounded-full text-xs font-medium {{ user.isAdmin ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-700' }}">
+                                    {{ user.isAdmin ? 'Oui' : 'Non' }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 space-y-2">
+                                <div>
+                                    <button type="submit"
+                                            class="bg-indigo-600 text-white text-xs font-medium px-3 py-1 rounded hover:bg-indigo-700">
+                                        Modifier
+                                    </button>
+                                </div>
+                                <div class="space-x-1">
+                                    <a href="{{ path('admin_user_toggle', {id: user.id}) }}"
+                                       class="text-xs text-orange-600 hover:underline">
+                                        {{ user.isBlocked ? 'Débloquer' : 'Bloquer' }}
+                                    </a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="{{ path('admin_user_toggle_admin', {id: user.id}) }}"
+                                       class="text-xs text-blue-600 hover:underline"
+                                       onclick="return confirm('Modifier le rôle administrateur de cet utilisateur ?');">
+                                        {{ user.isAdmin ? 'Retirer admin' : 'Passer admin' }}
+                                    </a>
+                                    <span class="text-gray-400">|</span>
+                                    <a href="{{ path('admin_user_delete', {id: user.id}) }}"
+                                       class="text-xs text-red-600 hover:underline"
+                                       onclick="return confirm('Supprimer cet utilisateur ?');">
+                                        Supprimer
+                                    </a>
+                                </div>
+                            </td>
+                        </form>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">Aucun utilisateur trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

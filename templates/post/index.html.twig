@@ -3,40 +3,41 @@
 {% block title %}Tous les articles{% endblock %}
 
 {% block body %}
-    <div class="max-w-4xl mx-auto px-4 py-10">
+    <div class="max-w-5xl mx-auto px-6 py-12">
 
-        <div class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl font-bold text-center">Liste de tous les articles</h1>
-            {% if app.user %}
-            <a href="{{ path('app_post_new') }}"
-               class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
-                ➕ Nouvel article
-            </a>
-            {% endif %}
+        <div class="mb-10 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-800">
+                📰 Tous les articles
+            </h1>
         </div>
 
+            {% if app.user %}
+                <div class="mt-4 text-center">
+                    <a href="{{ path('app_post_new') }}"
+                       class="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-full shadow-md hover:bg-blue-700 transition duration-300">
+                        ➕ Nouvel article
+                    </a>
+                </div>
+            {% endif %}
+
         {% for post in posts %}
-            <article class="bg-white shadow-md rounded-xl p-6 mb-6 hover:shadow-lg transition">
-                <h2 class="text-2xl font-semibold text-blue-700 hover:underline mb-2">
+            <article class="bg-white border border-gray-200 shadow-sm hover:shadow-md rounded-2xl p-6 mb-8 transition-all duration-300">
+                <h2 class="text-2xl font-bold text-blue-700 hover:underline mb-3">
                     <a href="{{ path('app_post_show', { id: post.id }) }}">
                         {{ post.title }}
                     </a>
                 </h2>
-                <p class="text-gray-700 mb-3">
+                <p class="text-gray-700 mb-4 leading-relaxed">
                     {{ post.content|slice(0, 150) ~ '...' }}
                 </p>
-                <p class="text-sm text-gray-500 mb-1">
-                    ✍️ <em>Par {{ post.author }}</em>
-                </p>
-                <p class="text-sm text-gray-500">
-                    📅 <em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em>
-                </p>
-                <p class="text-sm text-gray-600">
-                    ❤️ <strong>{{ post.getLikeCount() }}</strong> like{{ post.getLikeCount() > 1 ? 's' : '' }}
-                </p>
+                <div class="flex flex-wrap items-center text-sm text-gray-500 space-x-4">
+                    <span>✍️ <em>Par {{ post.author }}</em></span>
+                    <span>📅 <em>Le {{ post.createdAt|date('d/m/Y à H:i') }}</em></span>
+                    <span>❤️ <strong>{{ post.getLikeCount() }}</strong> like{{ post.getLikeCount() > 1 ? 's' : '' }}</span>
+                </div>
             </article>
         {% else %}
-            <p class="text-gray-500 text-center italic">Aucun article pour le moment.</p>
+            <p class="text-center text-gray-400 italic mt-10">Aucun article publié pour le moment.</p>
         {% endfor %}
 
     </div>
