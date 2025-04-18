@@ -31,10 +31,19 @@
                     {{ post.content|slice(0, 150) ~ '...' }}
                 </p>
                 <div class="flex flex-wrap items-center text-sm text-gray-500 space-x-4">
-                    <span>✍️ <em>Par {{ post.author }}</em></span>
+                    <span>✍️ <em>Par {{ post.author.pseudo }}</em></span>
                     <span>📅 <em>Le {{ post.createdAt|date('d/m/Y à H:i') }}</em></span>
                     <span>❤️ <strong>{{ post.getLikeCount() }}</strong> like{{ post.getLikeCount() > 1 ? 's' : '' }}</span>
                 </div>
+
+                {% if app.user and post.author == app.user %}
+                    <div class="mt-4 text-right">
+                        <a href="{{ path('app_post_edit', { id: post.id }) }}"
+                           class="inline-block text-sm text-indigo-600 font-semibold hover:underline">
+                            ✏️ Modifier
+                        </a>
+                    </div>
+                {% endif %}
             </article>
         {% else %}
             <p class="text-center text-gray-400 italic mt-10">Aucun article publié pour le moment.</p>

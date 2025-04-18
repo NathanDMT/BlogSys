@@ -19,7 +19,7 @@
         <a href="{{ path('app_profile') }}" style="margin-right: 15px;">Profil</a>
 
         {% if app.user.isAdmin %}
-            <a href="{{ path('admin_users') }}" style="margin-right: 15px;">Admin</a>
+            <a href="{{ path('admin_dashboard') }}" style="margin-right: 15px;">Admin</a>
         {% endif %}
 
         <a href="{{ path('app_logout') }}">Déconnexion</a>

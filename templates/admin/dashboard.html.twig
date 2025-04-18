@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Panel d'administration{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-10 text-center">
+        <h1 class="text-4xl font-bold mb-8">Panel d'administration</h1>
+
+        <div class="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <a href="{{ path('admin_users') }}"
+               class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition">
+                <h2 class="text-xl font-semibold text-indigo-700">Gestion des utilisateurs</h2>
+                <p class="text-sm mt-2 text-gray-600">Voir, modifier ou supprimer des utilisateurs.</p>
+            </a>
+
+            <a href="{{ path('admin_posts') }}"
+               class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition">
+                <h2 class="text-xl font-semibold text-indigo-700">Gestion des articles</h2>
+                <p class="text-sm mt-2 text-gray-600">Supprimer ou gérer les articles du blog.</p>
+            </a>
+
+            {# Prévu pour plus tard #}
+            {# <a href="{{ path('admin_comments') }}" class="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition">
+                <h2 class="text-xl font-semibold text-indigo-700">Gestion des commentaires</h2>
+                <p class="text-sm mt-2 text-gray-600">Modérer ou supprimer des commentaires.</p>
+            </a> #}
+        </div>
+    </div>
+{% endblock %}

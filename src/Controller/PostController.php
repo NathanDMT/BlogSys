@@ -27,7 +27,10 @@ final class PostController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $post->setCreatedAt(new \DateTimeImmutable());
+            // Définit automatiquement l'auteur
+            $post->setAuthor($this->getUser());
+
+            // Les dates sont gérées automatiquement
             $entityManager->persist($post);
             $entityManager->flush();
 
@@ -117,4 +120,26 @@ final class PostController extends AbstractController
         ]);
     }
 
+    #[Route('/post/{id}/edit', name: 'app_post_edit')]
+    public function edit(Post $post, Request $request, EntityManagerInterface $em): Response
+    {
+        // Vérifie que l'utilisateur courant est bien l'auteur du post
+        if ($this->getUser() !== $post->getAuthor()) {
+            throw $this->createAccessDeniedException('Vous ne pouvez modifier que vos propres articles.');
+        }
+
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $em->flush();
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        return $this->render('post/edit.html.twig', [
+            'form' => $form->createView(),
+            'post' => $post,
+        ]);
+    }
 }

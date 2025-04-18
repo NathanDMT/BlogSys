@@ -10,6 +10,13 @@
             <h1 class="text-3xl font-bold mb-4">{{ post.title }}</h1>
             <p class="text-gray-800 mb-6 leading-relaxed">{{ post.content }}</p>
 
+            <p class="text-sm text-gray-500">
+                🕒 Publié le {{ post.createdAt|date('d/m/Y à H:i') }}
+                {% if post.updatedAt > post.createdAt %}
+                    – Modifié le {{ post.updatedAt|date('d/m/Y à H:i') }}
+                {% endif %}
+            </p>
+
             {% if app.user %}
                 <form method="post" action="{{ path('app_post_like', { id: post.id }) }}">
                     <button type="submit"
