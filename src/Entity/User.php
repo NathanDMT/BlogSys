@@ -41,7 +41,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }
 
-    public function getPseudo(): ?string
+    public function getPseudo(): string
     {
         return $this->pseudo;
     }
@@ -85,11 +85,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getSalt(): ?string
     {
         return null;
-    }
-
-    public function getUsername(): string
-    {
-        return $this->email;
     }
 
     public function setRoles(array $roles): static

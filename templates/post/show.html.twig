@@ -17,6 +17,23 @@
                 {% endif %}
             </p>
 
+            <!-- Likes -->
+            {% if app.user %}
+                <form method="post" action="{{ path('app_post_like', { id: post.id }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('like' ~ post.id) }}">
+                    <button type="submit" class="flex items-center space-x-2 text-sm text-gray-700 hover:text-red-600">
+                        {% if post.likes|filter(l => l.user == app.user)|length > 0 %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+                        <span>{{ post.likes|length }} j'aime</span>
+                    </button>
+                </form>
+            {% else %}
+                <p class="mt-4 text-sm text-gray-500 italic">Connectez-vous pour aimer cet article.</p>
+            {% endif %}
+
             {% if app.user and post.author == app.user %}
                 <div class="mt-4 text-right">
                     <a href="{{ path('app_post_edit', { id: post.id }) }}"
@@ -65,7 +82,6 @@
                         }
                     }) }}
                 </div>
-
                 <button type="submit"
                         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded">
                     Publier

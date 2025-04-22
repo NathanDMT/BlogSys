@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\Exception\InvalidCsrfTokenException;
 
 final class PostController extends AbstractController
 {
@@ -64,6 +65,7 @@ final class PostController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $comment->setAuthor($this->getUser());
             $entityManager->persist($comment);
             $entityManager->flush();
 
@@ -77,13 +79,19 @@ final class PostController extends AbstractController
     }
 
     // LIKE DE POST
-    #[Route('/post/{id}/like', name: 'app_post_like')]
-    public function like(Post $post, EntityManagerInterface $em, LikeRepository $likeRepository): Response
+    #[Route('/post/{id}/like', name: 'app_post_like', methods: ['POST'])]
+    public function like(Post $post, Request $request, EntityManagerInterface $em, LikeRepository $likeRepository): Response
     {
         $user = $this->getUser();
 
         if (!$user) {
             return $this->redirectToRoute('app_login');
+        }
+
+        // Vérification du token CSRF
+        $submittedToken = $request->request->get('_token');
+        if (!$this->isCsrfTokenValid('like' . $post->getId(), $submittedToken)) {
+            throw new InvalidCsrfTokenException('CSRF token invalide.');
         }
 
         $existingLike = $likeRepository->findOneBy([
@@ -97,7 +105,7 @@ final class PostController extends AbstractController
             $this->addFlash('success', 'Like retiré.');
         } else {
             $like = new Like();
-            $like->setPost($post); // ✅ c’est bien ici que l’erreur était
+            $like->setPost($post);
             $like->setUser($user);
 
             $em->persist($like);
