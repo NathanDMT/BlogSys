@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" href="{{ asset('images/favicon.ico') ~ '?v=1' }}" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
     {% block stylesheets %}{% endblock %}
     {% block javascripts %}
@@ -16,7 +17,10 @@
     <div class="max-w-7xl mx-auto flex justify-between items-center">
         <!-- Logo -->
         <div class="flex items-center space-x-6">
-            <a href="{{ path('app_home') }}" class="text-2xl font-bold text-blue-600 hover:text-blue-700">BlogSys</a>
+            <a href="{{ path('app_home') }}" class="flex items-center space-x-2 text-2xl font-bold text-blue-600 hover:text-blue-700">
+                <img src="{{ asset('images/BS_logo.png') }}" alt="Logo" class="h-8 w-8">
+                <span>BlogSys</span>
+            </a>
             <a href="{{ path('app_post_index') }}" class="hover:text-blue-600 transition">Articles</a>
 
             {% if app.user %}
