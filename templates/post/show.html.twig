@@ -3,27 +3,90 @@
 {% block title %}{{ post.title }}{% endblock %}
 
 {% block body %}
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.content }}</p>
-    <p><em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em></p>
+    <div class="max-w-3xl mx-auto px-4 py-10 space-y-10">
 
-    <hr>
+        <!-- Article -->
+        <div class="bg-white shadow-lg rounded-xl p-6">
+            <h1 class="text-3xl font-bold mb-4">{{ post.title }}</h1>
+            <p class="text-gray-800 mb-6 leading-relaxed">{{ post.content }}</p>
 
-    <h3>Commentaires</h3>
-    {% for comment in post.comments %}
-        <div style="margin-bottom: 1em; border-bottom: 1px solid #ccc; padding-bottom: .5em;">
-            <strong>{{ comment.author }}</strong><br>
-            <small>{{ comment.createdAt|date('d/m/Y à H:i') }}</small>
-            <p>{{ comment.content }}</p>
+            <p class="text-sm text-gray-500">
+                🕒 Publié le {{ post.createdAt|date('d/m/Y à H:i') }}
+                {% if post.updatedAt > post.createdAt %}
+                    – Modifié le {{ post.updatedAt|date('d/m/Y à H:i') }}
+                {% endif %}
+            </p>
+
+            <!-- Likes -->
+            {% if app.user %}
+                <form method="post" action="{{ path('app_post_like', { id: post.id }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('like' ~ post.id) }}">
+                    <button type="submit" class="flex items-center space-x-2 text-sm text-gray-700 hover:text-red-600">
+                        {% if post.likes|filter(l => l.user == app.user)|length > 0 %}
+                            ❤️
+                        {% else %}
+                            🤍
+                        {% endif %}
+                        <span>{{ post.likes|length }} j'aime</span>
+                    </button>
+                </form>
+            {% else %}
+                <p class="mt-4 text-sm text-gray-500 italic">Connectez-vous pour aimer cet article.</p>
+            {% endif %}
+
+            {% if app.user and post.author == app.user %}
+                <div class="mt-4 text-right">
+                    <a href="{{ path('app_post_edit', { id: post.id }) }}"
+                       class="inline-block text-sm text-indigo-600 font-semibold hover:underline">
+                        ✏️ Modifier
+                    </a>
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        <p>Aucun commentaire pour le moment.</p>
-    {% endfor %}
 
-    <h4>Laisser un commentaire</h4>
-    {{ form_start(commentForm) }}
-    {{ form_row(commentForm.author) }}
-    {{ form_row(commentForm.content) }}
-    <button type="submit">Envoyer</button>
-    {{ form_end(commentForm) }}
+        <!-- Commentaires -->
+        <div class="bg-white shadow-md rounded-xl p-6 space-y-6">
+            <h2 class="text-2xl font-semibold mb-4">💬 Commentaires</h2>
+
+            {% for comment in post.comments %}
+                <div class="border border-gray-200 p-4 rounded-lg">
+                    <div class="flex justify-between items-center text-sm text-gray-500 mb-1">
+                        <strong>{{ comment.author ? comment.author.pseudo : 'Utilisateur inconnu' }}</strong>
+                        <span>{{ comment.createdAt|date('d/m/Y H:i') }}</span>
+                    </div>
+                    <p class="text-gray-800">{{ comment.content }}</p>
+
+                    {% if app.user and (comment.author == app.user or app.user.isAdmin) %}
+                        <div class="text-right mt-2">
+                            <a href="{{ path('app_comment_delete', { id: comment.id }) }}"
+                               class="text-sm text-red-500 hover:underline">🗑 Supprimer</a>
+                        </div>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="text-gray-500 italic">Aucun commentaire pour l’instant.</p>
+            {% endfor %}
+
+        </div>
+
+        <!-- Formulaire de commentaire -->
+        {% if app.user %}
+            <div class="bg-white shadow-md rounded-xl p-6">
+                <h2 class="text-xl font-semibold mb-4">Ajouter un commentaire</h2>
+
+                {{ form_start(commentForm) }}
+                <div class="mb-4">
+                    {{ form_row(commentForm.content, {
+                        attr: {
+                            class: 'w-full border border-gray-300 rounded px-3 py-2 focus:ring focus:ring-blue-200'
+                        }
+                    }) }}
+                </div>
+                {{ form_end(commentForm) }}
+            </div>
+        {% else %}
+            <p class="text-center text-gray-500 italic">Connectez-vous pour laisser un commentaire.</p>
+        {% endif %}
+
+    </div>
 {% endblock %}

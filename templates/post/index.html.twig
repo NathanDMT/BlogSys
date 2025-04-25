@@ -1,20 +1,58 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PostController!{% endblock %}
+{% block title %}Tous les articles{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <div class="max-w-5xl mx-auto px-6 py-12">
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+        <div class="mb-10 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-800">
+                📰 Tous les articles
+            </h1>
+        </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/Users/demoi/Desktop/BlogSys/src/Controller/PostController.php</code></li>
-        <li>Your template at <code>C:/Users/demoi/Desktop/BlogSys/templates/post/index.html.twig</code></li>
-    </ul>
-</div>
+            {% if app.user %}
+                <div class="mt-4 text-center">
+                    <a href="{{ path('app_post_new') }}"
+                       class="inline-flex items-center gap-2 bg-blue-600 text-white font-semibold px-5 py-2.5 rounded-full shadow-md hover:bg-blue-700 transition duration-300">
+                        ➕ Nouvel article
+                    </a>
+                </div>
+            {% endif %}
+
+        {% for post in posts %}
+            <article class="bg-white border border-gray-200 shadow-sm hover:shadow-md rounded-2xl p-6 mb-8 transition-all duration-300">
+                <h2 class="text-2xl font-bold text-blue-700 hover:underline mb-3">
+                    <a href="{{ path('app_post_show', { id: post.id }) }}">
+                        {{ post.title }}
+                    </a>
+                </h2>
+                <p class="text-gray-700 mb-4 leading-relaxed">
+                    {{ post.content|slice(0, 150) ~ '...' }}
+                </p>
+                <div class="flex flex-wrap items-center text-sm text-gray-500 space-x-4">
+                    <span>✍️ <em>Par {{ post.author.pseudo }}</em></span>
+                    <span>
+                        📅 <em>Le {{ post.createdAt|date('d/m/Y à H:i') }}</em>
+                        {% if post.updatedAt > post.createdAt %}
+                            <em class="text-gray-500">(modifié le {{ post.updatedAt|date('d/m/Y à H:i') }})</em>
+                        {% endif %}
+                    </span>
+                    <span>❤️ <strong>{{ post.getLikeCount() }}</strong> like{{ post.getLikeCount() > 1 ? 's' : '' }}</span>
+                </div>
+
+                {% if app.user and post.author == app.user %}
+                    <div class="mt-4 text-right">
+                        <a href="{{ path('app_post_edit', { id: post.id }) }}"
+                           class="inline-block text-sm text-indigo-600 font-semibold hover:underline">
+                            ✏️ Modifier
+                        </a>
+                    </div>
+                {% endif %}
+            </article>
+        {% else %}
+            <p class="text-center text-gray-400 italic mt-10">Aucun article publié pour le moment.</p>
+        {% endfor %}
+
+    </div>
 {% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+{% block title %}Modifier l’article{% endblock %}
+
+{% block body %}
+    <div class="max-w-2xl mx-auto px-4 py-10">
+        <h1 class="text-3xl font-bold text-center mb-8">✏️ Modifier l'article</h1>
+        <div class="bg-white shadow-md rounded-lg p-6">
+            {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
+
+            {% for field in form %}
+                {% if field.vars.name != '_token' %}
+                    <div class="mb-4">
+                        {{ form_label(field) }}
+                        {{ form_widget(field, {'attr': {'class': 'w-full border px-3 py-2 rounded'}}) }}
+                        {{ form_errors(field) }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+
+            <div class="hidden">
+                {{ form_row(form._token) }}
+            </div>
+
+            <div class="mt-6 text-center">
+                <button class="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700">Enregistrer</button>
+            </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}

@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
+use AllowDynamicProperties;
 use App\Repository\LikeRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: LikeRepository::class)]
+#[AllowDynamicProperties] #[ORM\Entity(repositoryClass: LikeRepository::class)]
 #[ORM\Table(name: '`like`')]
 class Like
 {
@@ -14,11 +15,13 @@ class Like
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $username = null;
+    #[ORM\ManyToOne(inversedBy: 'likes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?User $user = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $post = null;
+    #[ORM\ManyToOne(inversedBy: 'likes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Post $post = null;
 
     public function getId(): ?int
     {
@@ -32,15 +35,14 @@ class Like
         return $this;
     }
 
-    public function getUsername(): ?string
+    public function getUser(): ?User
     {
-        return $this->username;
+        return $this->user;
     }
 
-    public function setUsername(string $username): static
+    public function setUser(?User $user): static
     {
-        $this->username = $username;
-
+        $this->user = $user;
         return $this;
     }
 
@@ -49,10 +51,9 @@ class Like
         return $this->post;
     }
 
-    public function setPost(string $post): static
+    public function setPost(?Post $post): static
     {
         $this->post = $post;
-
         return $this;
     }
 }

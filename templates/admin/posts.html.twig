@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des articles{% endblock %}
+
+{% block body %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold mb-6 text-center">Gestion des articles</h1>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-100 text-gray-700 text-sm uppercase font-semibold">
+                <tr>
+                    <th class="px-6 py-4">ID</th>
+                    <th class="px-6 py-4">Titre</th>
+                    <th class="px-6 py-4">Auteur</th>
+                    <th class="px-6 py-4">Date</th>
+                    <th class="px-6 py-4">Actions</th>
+                </tr>
+                </thead>
+                <tbody class="text-gray-700 text-sm">
+                {% for post in posts %}
+                    <tr class="border-t border-gray-200 hover:bg-gray-50">
+                        <td class="px-6 py-4">{{ post.id }}</td>
+                        <td class="px-6 py-4">{{ post.title }}</td>
+                        <td class="px-6 py-4">{{ post.author.pseudo }}</td>
+                        <td class="px-6 py-4">
+                            {{ post.createdAt|date('d/m/Y H:i') }}
+                            {% if post.updatedAt > post.createdAt %}
+                                <br><span class="text-xs text-gray-500 italic">
+                                modifié le {{ post.updatedAt|date('d/m/Y H:i') }}
+                            </span>
+                            {% endif %}
+                        </td>
+                        </td>
+
+                        <td class="px-6 py-4 space-x-2">
+                            <a href="{{ path('app_post_edit', {id: post.id}) }}"
+                               class="text-indigo-600 text-xs hover:underline">
+                                ✏️ Modifier
+                            </a>
+                            <span class="text-gray-400">|</span>
+                            <a href="{{ path('admin_post_delete', {id: post.id}) }}"
+                               class="text-red-600 text-xs hover:underline"
+                               onclick="return confirm('Supprimer cet article ?');">
+                                🗑 Supprimer
+                            </a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">Aucun article trouvé.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

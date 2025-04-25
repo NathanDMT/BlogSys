@@ -3,15 +3,26 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-    <h1>Liste des articles</h1>
+    <div class="max-w-5xl mx-auto text-center py-20">
+        <h1 class="text-4xl font-extrabold text-blue-600 mb-6">Bienvenue sur <span class="text-gray-800">BlogSys</span> !</h1>
+        <p class="text-lg text-gray-600 mb-8">
+            Partagez vos idées, explorez les articles des autres, commentez, aimez, et faites vivre la communauté 🎉
+        </p>
 
-    {% for post in posts %}
-        <article style="margin-bottom: 2em;">
-            <h2><a href="{{ path('app_post_show', { id: post.id }) }}">{{ post.title }}</a></h2>
-            <p>{{ post.content|slice(0, 150) ~ '...' }}</p>
-            <p><em>Publié le {{ post.createdAt|date('d/m/Y à H:i') }}</em></p>
-        </article>
-    {% else %}
-        <p>Aucun article publié pour le moment.</p>
-    {% endfor %}
+        <div class="flex justify-center gap-6">
+            <a href="{{ path('app_post_index') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium shadow">
+                Voir les articles
+            </a>
+
+            {% if not app.user %}
+                <a href="{{ path('app_register') }}" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-lg font-medium shadow">
+                    S'inscrire
+                </a>
+            {% else %}
+                <a href="{{ path('app_post_new') }}" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-3 rounded-lg text-lg font-medium shadow">
+                    Nouvel article
+                </a>
+            {% endif %}
+        </div>
+    </div>
 {% endblock %}
